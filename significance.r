@@ -13,15 +13,18 @@ dim(horse.data)
 # we need horse as a factor (it's catagorical)
 horse.data$horse <- as.factor(horse.data$horse)
 
+W_symmetry_score = horse.data$W 
+Horse  = horse.data$horse
+
+A_symmetry_score = horse.data$A
+
 # boxplot of data:
-boxplot(horse.data$A ~ horse.data$horse)
+boxplot(horse.data$A ~ horse.data$horse, title = "hej")
 boxplot(horse.data$S ~ horse.data$horse)
-boxplot(horse.data$W ~ horse.data$horse)
 
-
-
-
-boxplot(horse.data$W ~ horse.data$horse)
+boxplot(A_symmetry_score ~ Horse)
+boxplot(W_symmetry_score ~ Horse)
+boxplot(log(W_symmetry_score) ~ Horse)
 
 qqnorm(horse.data$A)
 qqline(horse.data$A)
@@ -48,6 +51,13 @@ anova(lm(S ~ horse, data = horse.data)) # not significant
 anova(lm(W ~ horse, data = horse.data)) # not significant
 
 summary(lm(A ~ horse, data = horse.data))
+
+
+
+# test with kruskal wallis
+kruskal.test(horse.data$A, horse.data$horse)
+kruskal.test(horse.data$S, horse.data$horse)
+kruskal.test(horse.data$W, horse.data$horse)
 
 #######################################
 # test
