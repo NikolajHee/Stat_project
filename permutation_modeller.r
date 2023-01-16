@@ -40,7 +40,7 @@ abline(v = tobs)
 
 t0 <- sum(tobs < save)/n
 p_val <- 2*t0
-p_val # not significant
+p_val # significant
 
 # between randomforest and baseline
 
@@ -81,8 +81,8 @@ hist(save)
 abline(v = tobs)
 
 t0 <- sum(tobs < save)/n
-p_val <- 2*t0
-p_val # signnificant
+p_val <- 2*(t0)
+p_val # not signnificant
 
 
 ###################################### t.test

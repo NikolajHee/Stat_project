@@ -8,23 +8,30 @@ head(horse.data)
 colnames(horse.data)
 dim(horse.data)
 
+# standardization
+
+horse.data$A <- (horse.data$A - mean(horse.data$A))/sd(horse.data$A)
+horse.data$W <- (horse.data$W - mean(horse.data$W))/sd(horse.data$W)
+horse.data$S <- (horse.data$S - mean(horse.data$S))/sd(horse.data$S)
 
 ######## effect on either score
 # we need horse as a factor (it's catagorical)
 horse.data$horse <- as.factor(horse.data$horse)
-
-W_symmetry_score = horse.data$W 
-Horse  = horse.data$horse
-
-A_symmetry_score = horse.data$A
+horse.data$lameLeg <- as.factor(horse.data$lameLeg)
 
 # boxplot of data:
-boxplot(horse.data$A ~ horse.data$horse, title = "hej")
-boxplot(horse.data$S ~ horse.data$horse)
 
-boxplot(A_symmetry_score ~ Horse)
-boxplot(W_symmetry_score ~ Horse)
-boxplot(log(W_symmetry_score) ~ Horse)
+boxplot(horse.data$A ~ horse.data$horse)
+boxplot(horse.data$S ~ horse.data$horse)
+S_symmetry_score
+
+
+boxplot(horse.data$W ~ horse.data$horse)
+
+for (i in ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B9']) {
+print(horse.data$A[horse.data$horse == i])
+}
+
 
 qqnorm(horse.data$A)
 qqline(horse.data$A)
@@ -35,9 +42,21 @@ qqline(horse.data$S)
 qqnorm(horse.data$W)
 qqline(horse.data$W)
 
-# the different group looks fairly normal distributed based
-# on the plot
-# they overlap 
+
+bartlett.test(horse.data$A ~ horse.data$horse)
+bartlett.test(horse.data$S ~ horse.data$horse)
+bartlett.test(horse.data$W ~ horse.data$horse)
+
+
+
+fligner.test(horse.data$A ~ horse.data$horse)
+fligner.test(horse.data$S ~ horse.data$horse)
+fligner.test(horse.data$W ~ horse.data$horse)
+
+with(car)
+
+
+#
 
 # there is a bit difference in variiance,
 # maybe some transformation is in order
@@ -50,14 +69,16 @@ anova(lm(A ~ horse, data = horse.data)) # not significant
 anova(lm(S ~ horse, data = horse.data)) # not significant
 anova(lm(W ~ horse, data = horse.data)) # not significant
 
-summary(lm(A ~ horse, data = horse.data))
+
+kruskal.test(A ~ horse, data = horse.data) # not significant
+kruskal.test(S ~ horse, data = horse.data) # not significant
+kruskal.test(W ~ horse, data = horse.data) # not significant
+
+# we do kruskal wallis tet with W, as it does not have
+# equal variance. 
 
 
 
-# test with kruskal wallis
-kruskal.test(horse.data$A, horse.data$horse)
-kruskal.test(horse.data$S, horse.data$horse)
-kruskal.test(horse.data$W, horse.data$horse)
 
 #######################################
 # test
@@ -76,3 +97,21 @@ anova(fit)
 
 fit <- lm(score_val ~ score + score:horse, data=horse.newData)
 anova(fit)
+
+##################################################
+# test 2
+
+anova(lm(A ~ lameLeg * horse, data = horse.data))
+
+anova(lm(A ~ lameLeg + lameLeg : horse, data = horse.data))
+
+
+
+anova(lm(S ~ lameLeg * horse, data = horse.data))
+
+
+anova(lm(W ~ lameLeg * horse, data = horse.data))
+
+anova(lm(W ~ lameLeg + horse, data = horse.data))
+
+anova(lm(W ~ lameLeg , data = horse.data))
