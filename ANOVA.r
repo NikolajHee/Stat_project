@@ -20,27 +20,64 @@ horse.data$horse <- as.factor(horse.data$horse)
 horse.data$lameLeg <- as.factor(horse.data$lameLeg)
 
 # boxplot of data:
-
-boxplot(horse.data$A ~ horse.data$horse)
-boxplot(horse.data$S ~ horse.data$horse)
-S_symmetry_score
+library(ggplot2)
 
 
-boxplot(horse.data$W ~ horse.data$horse)
+ggplot(horse.data, aes(x=horse, y=A)) + 
+    geom_boxplot(size=1) + theme(text = element_text(size = 25)) 
+ggsave("boxplot1.png")
+
+
+ggplot(horse.data, aes(x=horse, y=S)) + 
+    geom_boxplot(size=1) + theme(text = element_text(size = 25)) 
+ggsave("boxplot2.png")
+
+ggplot(horse.data, aes(x=horse, y=W)) + 
+    geom_boxplot(size=1) + theme(text = element_text(size = 25)) 
+ggsave("boxplot3.png")
+
 
 for (i in ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B9']) {
 print(horse.data$A[horse.data$horse == i])
 }
 
+mynamestheme <- theme(
+  plot.title = element_text(family = "Helvetica", face = "bold", size = (24)),
+  legend.title = element_text(colour = "steelblue", face = "bold.italic", family = "Helvetica"),
+  legend.text = element_text(face = "italic", family = "Helvetica"),
+  axis.title = element_text(family = "Helvetica", size = (24)),
+  axis.text = element_text(family = "Courier", colour = "cornflowerblue", size = (24)),
+)
 
-qqnorm(horse.data$A)
-qqline(horse.data$A)
+fit_A <- lm(A ~ horse, data = horse.data)
+fit_S <- lm(S ~ horse, data = horse.data)
+fit_W <- lm(W ~ horse, data = horse.data)
 
-qqnorm(horse.data$S)
-qqline(horse.data$S)
+df_qq <- data.frame(fit_A = resid(fit_A), fit_S = resid(fit_S), fit_W = resid(fit_W))
 
-qqnorm(horse.data$W)
-qqline(horse.data$W)
+ggplot(df_qq, aes(sample = fit_A)) + stat_qq() + stat_qq_line() +
+    labs(title="QQ-plot (A)", x = 'Theoretical Quantiles', y = 'Sample Quantiles')+ mynamestheme
+ggsave("QQ1.png")
+
+ggplot(df_qq, aes(sample = fit_S)) + stat_qq() + stat_qq_line() +
+    labs(title="QQ-plot (S)", x = 'Theoretical Quantiles', y = 'Sample Quantiles')+ mynamestheme
+ggsave("QQ2.png")
+
+ggplot(df_qq, aes(sample = fit_W)) + stat_qq() + stat_qq_line() +
+    labs(title="QQ-plot (W)", x = 'Theoretical Quantiles', y = 'Sample Quantiles')+ mynamestheme
+ggsave("QQ3.png")
+
+   
+
+
+qqnorm(resid(fit_A) )
+qqline(resid(fit_A))
+
+qqnorm(resid(fit_S))
+qqline(resid(fit_S))
+
+qqnorm(resid(fit_W))
+qqline(resid(fit_W))
 
 
 bartlett.test(horse.data$A ~ horse.data$horse)
