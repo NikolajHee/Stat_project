@@ -1,4 +1,4 @@
-############################################## loading
+# loading
 # directory
 setwd("/Users/nikolaj/Desktop/main/stat/p r o j e c t")
 
@@ -8,20 +8,33 @@ head(horse.data)
 colnames(horse.data)
 dim(horse.data)
 
-# standardization
 
-horse.data$A <- (horse.data$A - mean(horse.data$A))/sd(horse.data$A)
-horse.data$W <- (horse.data$W - mean(horse.data$W))/sd(horse.data$W)
-horse.data$S <- (horse.data$S - mean(horse.data$S))/sd(horse.data$S)
+################################## effect on either score
+################################## 
+################################## 
+################################## 
 
-######## effect on either score
+
 # we need horse as a factor (it's catagorical)
 horse.data$horse <- as.factor(horse.data$horse)
 horse.data$lameLeg <- as.factor(horse.data$lameLeg)
 
+
+
+########### first we do a lot of testing to test for the differnt assumptions
+
+# levene's test
+library(car)
+leveneTest(data$A~data$horse)
+leveneTest(data$W~data$horse)
+leveneTest(data$S~data$horse)
+
+
+
+
+
 # boxplot of data:
 library(ggplot2)
-
 
 ggplot(horse.data, aes(x=horse, y=A)) + 
     geom_boxplot(size=1) + theme(text = element_text(size = 25)) 
@@ -37,9 +50,6 @@ ggplot(horse.data, aes(x=horse, y=W)) +
 ggsave("boxplot3.png")
 
 
-for (i in ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B9']) {
-print(horse.data$A[horse.data$horse == i])
-}
 
 mynamestheme <- theme(
   plot.title = element_text(family = "Helvetica", face = "bold", size = (24)),
@@ -68,7 +78,7 @@ ggplot(df_qq, aes(sample = fit_W)) + stat_qq() + stat_qq_line() +
 ggsave("QQ3.png")
 
    
-
+# normality of residuals
 
 qqnorm(resid(fit_A) )
 qqline(resid(fit_A))
@@ -85,20 +95,9 @@ bartlett.test(horse.data$S ~ horse.data$horse)
 bartlett.test(horse.data$W ~ horse.data$horse)
 
 
-
 fligner.test(horse.data$A ~ horse.data$horse)
 fligner.test(horse.data$S ~ horse.data$horse)
 fligner.test(horse.data$W ~ horse.data$horse)
-
-with(car)
-
-
-#
-
-# there is a bit difference in variiance,
-# maybe some transformation is in order
-boxplot((horse.data$S) ~ horse.data$horse)
-
 
 
 #anova(lm(horse ~ A, data = horse.data)) 
@@ -118,7 +117,10 @@ kruskal.test(W ~ horse, data = horse.data) # not significant
 
 
 #######################################
-# test
+# testing area
+#######################################
+
+
 # changing data
 
 score <- rep(c('A', 'S', 'W'), each= 85)
